@@ -19,6 +19,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 2.5rem;
 }
 
 body {
@@ -38,4 +39,9 @@ body {
   align-items: center;
   white-space: nowrap;
   line-height: 1;
+}
+
+::selection {
+  background: #5b4a38;
+  color: #fff;
 }

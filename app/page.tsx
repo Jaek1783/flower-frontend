@@ -1,23 +1,11 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import Hero from "@/components/contents/Hero";
 
 export default function Home() {
-  const [data, setData] = useState<{ message?: string } | null>(null);
-
-  useEffect(() => {
-    fetch("/api/")
-      .then((res) => res.json())
-      .then(setData)
-      .catch(console.error);
-  }, []);
-
   return (
-    <main className="mx-auto max-w-7xl px-6 py-16 lg:px-10">
-      <h1 className="font-serif-eng text-4xl text-coffee-dark">Flower</h1>
-      <p className="mt-3 text-sm text-muted">
-        {data?.message ?? "로딩 중..."}
-      </p>
+    <main>
+      <Hero />
+      {/* about 앵커 — 스크롤 인디케이터 대상 (섹션은 이후 추가) */}
+      <div id="about" aria-hidden className="h-0 scroll-mt-20" />
     </main>
   );
 }

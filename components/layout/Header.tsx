@@ -1,14 +1,43 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { NAV_LINKS, SITE } from "@/lib/site";
 
 export default function Header() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [open, setOpen] = useState(false);
+  const [solid, setSolid] = useState(!isHome);
+
+  useEffect(() => {
+    if (!isHome) {
+      setSolid(true);
+      return;
+    }
+
+    const onScroll = () => setSolid(window.scrollY > 60);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [isHome]);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  const linkClass = solid
+    ? "nav-link text-base font-bold tracking-wider text-coffee-dark transition hover:text-coffee"
+    : "nav-link text-base font-bold tracking-wider text-white/90 transition hover:text-white";
 
   return (
-    <header className="sticky inset-x-0 top-0 z-50 bg-cream-light/95 shadow-sm backdrop-blur">
+    <header
+      id="header"
+      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+        solid ? "bg-cream-light/95 shadow-sm backdrop-blur" : ""
+      }`}
+    >
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="flex h-20 items-center justify-between gap-2 sm:gap-3">
           <Link
@@ -16,7 +45,11 @@ export default function Header() {
             className="min-w-0 max-w-[calc(100%-8rem)] shrink leading-none sm:max-w-[calc(100%-12rem)] md:max-w-none"
             aria-label={`${SITE.name} 홈`}
           >
-            <span className="font-serif-eng text-2xl tracking-wide text-coffee-dark md:text-3xl">
+            <span
+              className={`font-serif-eng text-2xl tracking-wide md:text-3xl ${
+                solid ? "text-coffee-dark" : "text-white"
+              }`}
+            >
               {SITE.name}
             </span>
           </Link>
@@ -33,7 +66,7 @@ export default function Header() {
                   {...(link.blank
                     ? { target: "_blank", rel: "noopener" }
                     : {})}
-                  className="nav-link inline-flex items-center whitespace-nowrap text-base font-bold leading-none tracking-wider text-coffee-dark transition hover:text-coffee"
+                  className={linkClass}
                 >
                   {link.label}
                 </Link>
@@ -42,7 +75,11 @@ export default function Header() {
 
             <button
               type="button"
-              className="text-coffee md:hidden"
+              className={
+                solid
+                  ? "text-coffee md:hidden"
+                  : "text-white/90 transition-colors duration-500 md:hidden"
+              }
               aria-label={open ? "메뉴 닫기" : "메뉴 열기"}
               aria-expanded={open}
               onClick={() => setOpen((v) => !v)}
@@ -67,14 +104,14 @@ export default function Header() {
       </div>
 
       {open && (
-        <div className="border-t border-cream-deep bg-cream-light md:hidden">
+        <div className="bg-coffee-deep/95 backdrop-blur md:hidden">
           <nav className="flex flex-col px-6 py-4">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 {...(link.blank ? { target: "_blank", rel: "noopener" } : {})}
-                className="border-b border-coffee/10 py-3 text-sm font-medium tracking-widest text-coffee-dark last:border-0"
+                className="py-3 text-sm tracking-widest text-white"
                 onClick={() => setOpen(false)}
               >
                 {link.label}
